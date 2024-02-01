@@ -1,9 +1,10 @@
 import {promises as fs} from 'fs';
 import crypto from 'crypto';
-import {Category, CategoryWithoutId, Location, LocationWithoutId} from "./types";
+import {Category, CategoryWithoutId, Item, ItemWithoutId, Location, LocationWithoutId} from "./types";
 const fileName = './db.json';
-let data: Category[] = [];
+let dataCategory: Category[] = [];
 let dataLocation: Location[] = [];
+let dataItem: Item[] = [];
 
 const fileDb = {
     async init() {
@@ -12,9 +13,9 @@ const fileDb = {
             const parsedData = JSON.parse(fileContents.toString());
 
             if(parsedData.categories) {
-                data = parsedData.categories;
+                dataCategory = parsedData.categories;
             } else {
-                data = [];
+                dataCategory = [];
             }
 
             if(parsedData.locations) {
@@ -22,22 +23,30 @@ const fileDb = {
             } else {
                 dataLocation = [];
             }
+
+            if(parsedData.items) {
+                dataItem = parsedData.items;
+            } else {
+                dataItem = [];
+            }
         } catch (e) {
-            data = [];
+            dataCategory = [];
             dataLocation = [];
+            dataItem = [];
         }
     },
     async getItems() {
         const dataToGet = {
-            categories: data,
+            categories: dataCategory,
             locations: dataLocation,
+            items: dataItem,
         }
         return dataToGet;
     },
-    async addItem(file: CategoryWithoutId) {
+    async addItem(file: ItemWithoutId) {
         const id = crypto.randomUUID();
         const response = {id, ...file};
-        data.push(response);
+        dataItem.push(response);
         await this.save();
 
         return response;
@@ -51,10 +60,19 @@ const fileDb = {
 
         return responseLocation;
     },
+    async addCategory(file: CategoryWithoutId) {
+        const id = crypto.randomUUID();
+        const response = {id, ...file};
+        dataCategory.push(response);
+        await this.save();
+
+        return response;
+    },
     async save() {
         const dataToSave = {
-            categories: data,
+            categories: dataCategory,
             locations: dataLocation,
+            items: dataItem,
         }
         return fs.writeFile(fileName, JSON.stringify(dataToSave));
     }

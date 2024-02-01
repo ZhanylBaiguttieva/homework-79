@@ -25,7 +25,7 @@ categoriesRouter.post('/', async(req, res)=>{
         description: req.body.description,
     };
 
-    const newCategory = await fileDb.addItem(category);
+    const newCategory = await fileDb.addCategory(category);
     res.send(newCategory);
 });
 
