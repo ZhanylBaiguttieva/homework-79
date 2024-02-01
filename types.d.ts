@@ -22,7 +22,7 @@ export interface Item {
     location_id: string;
     name: string;
     description: string;
-    image: string;
+    image: string | null;
 }
 
 export type ItemWithoutId = Omit<Item, 'id'>;
