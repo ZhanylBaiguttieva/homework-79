@@ -17,6 +17,18 @@ locationsRouter.get('/:id', async (req, res)=>{
     const location  = locations.find(p => p.id === req.params.id);
     res.send(location);
 });
+locationsRouter.delete('/:id', async (req, res)=>{
+    const {locations} = await fileDb.getItems();
+    const location_id = req.params.id;
+    const idToDelete = locations.findIndex(location => location.id === location_id);
+    if (idToDelete !== -1) {
+        locations.splice(idToDelete,1);
+        await fileDb.save();
+        res.send(locations);
+    } else {
+        res.status(404).send('Location not found');
+    }
+});
 
 locationsRouter.post('/', async(req, res)=>{
 

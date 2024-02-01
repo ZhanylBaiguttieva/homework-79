@@ -18,6 +18,19 @@ categoriesRouter.get('/:id', async (req, res)=>{
     res.send(category);
 });
 
+categoriesRouter.delete('/:id', async (req, res)=>{
+    const {categories} = await fileDb.getItems();
+    const category_id = req.params.id;
+    const idToDelete = categories.findIndex(category => category.id === category_id);
+    if (idToDelete !== -1) {
+        categories.splice(idToDelete,1);
+        await fileDb.save();
+        res.send(categories);
+    } else {
+        res.status(404).send('Category not found');
+    }
+});
+
 categoriesRouter.post('/', async(req, res)=>{
 
     const category: CategoryWithoutId = {
