@@ -33,13 +33,17 @@ categoriesRouter.delete('/:id', async (req, res)=>{
 
 categoriesRouter.post('/', async(req, res)=>{
 
-    const category: CategoryWithoutId = {
-        title: req.body.title,
-        description: req.body.description,
-    };
+    if(req.body.title) {
+        const category: CategoryWithoutId = {
+            title: req.body.title,
+            description: req.body.description,
+        };
+        const newCategory = await fileDb.addCategory(category);
+        res.send(newCategory);
+    } else {
+        res.status(404).send('title is required');
+    }
 
-    const newCategory = await fileDb.addCategory(category);
-    res.send(newCategory);
 });
 
 export default categoriesRouter;

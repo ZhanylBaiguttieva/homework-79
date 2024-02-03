@@ -44,17 +44,21 @@ itemsRouter.delete('/:id', async (req, res)=>{
 });
 
 itemsRouter.post('/', imagesUpload.single('image'),async(req, res)=>{
+    if(req.body.category_id && req.body.location_id && req.body.name){
+        const item: ItemWithoutId = {
+            category_id: req.body.category_id,
+            location_id: req.body.location_id,
+            name: req.body.name,
+            description: req.body.description,
+            image: req.file ? req.file.filename : null,
+        };
 
-    const item: ItemWithoutId = {
-        category_id: req.body.category_id,
-        location_id: req.body.location_id,
-        name: req.body.name,
-        description: req.body.description,
-        image: req.file ? req.file.filename : null,
-    };
+        const newItem = await fileDb.addItem(item);
+        res.send(newItem);
+    } else {
+        res.status(404).send('category_id, location_id, name are required');
+    }
 
-    const newItem = await fileDb.addItem(item);
-    res.send(newItem);
 });
 
 export default itemsRouter;

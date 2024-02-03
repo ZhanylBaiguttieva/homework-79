@@ -32,13 +32,18 @@ locationsRouter.delete('/:id', async (req, res)=>{
 
 locationsRouter.post('/', async(req, res)=>{
 
-    const location: LocationWithoutId = {
-        name: req.body.name,
-        description: req.body.description,
-    };
+    if(req.body.name) {
+        const location: LocationWithoutId = {
+            name: req.body.name,
+            description: req.body.description,
+        };
 
-    const newLocation = await fileDb.addLocation(location);
-    res.send(newLocation);
+        const newLocation = await fileDb.addLocation(location);
+        res.send(newLocation);
+    } else {
+        res.status(404).send('name is required');
+    }
+
 });
 
 export default locationsRouter;
